@@ -5,16 +5,19 @@
 #include <iostream>
 #include <string>
 
+
 class Tree {
 private:
-    TreeNode* root;             // Pointer to the root node
+    
+    TreeNode* nil = new TreeNode();
+    TreeNode* root = nil;             // Pointer to the root node
 
     // ~~ InorderTreeWalk() Description ~~
     // Traverses the left subtree of a node,
     // then the node itself, finally the right subtree.
     string InorderTreeWalk(TreeNode* node) {
         std::string str = "";
-        if (node != nullptr) {
+        if (node != nil && node != NULL) {
             str += InorderTreeWalk((*node).GetLeft());
             str += std::to_string((*node).GetValue()) + " ";
             str += InorderTreeWalk((*node).GetRight());
@@ -27,7 +30,7 @@ private:
     // subtree, and finally the right subtree.
     string PreorderTreeWalk(TreeNode* node) {
         std::string str = "";
-        if (node != nullptr) {
+        if (node != nil && node != NULL) {
             str += std::to_string((*node).GetValue()) + " ";
             str += PreorderTreeWalk((*node).GetLeft());
             str += PreorderTreeWalk((*node).GetRight());
@@ -40,7 +43,7 @@ private:
     // right subtree, and finally the node.
     string PostorderTreeWalk(TreeNode* node) {
         std::string str = "";
-        if (node != nullptr) {
+        if (node != nil) {
             str += PostorderTreeWalk((*node).GetLeft());
             str += PostorderTreeWalk((*node).GetRight());
             str += std::to_string((*node).GetValue()) + " ";
@@ -54,13 +57,13 @@ private:
         TreeNode* y = (*node).GetRight();
         // Set the left child of y as the right child of node
         (*node).SetRight((*y).GetLeft());
-        if ((*y).GetLeft() != nullptr) {
+        if ((*y).GetLeft() != nil) {
             (*y).GetLeft()->SetParent(node);
         }
         // Set the parent of y as the parent of node
         (*y).SetParent((*node).GetParent());
         // If node is the root of the tree, set y as the new root
-        if ((*node).GetParent() == nullptr) {
+        if ((*node).GetParent() == nil) {
             root = y;
         }
         // If node is the left child of its parent, set y as the new left child of the parent
@@ -84,13 +87,13 @@ private:
         TreeNode* y = (*node).GetLeft();
         // Set the left child of y as the right child of node
         (*node).SetLeft((*y).GetRight());
-        if ((*y).GetRight() != nullptr) {
+        if ((*y).GetRight() != nil) {
             (*y).GetRight()->SetParent(node);
         }
         // Set the parent of y as the parent of node
         (*y).SetParent((*node).GetParent());
         // If node is the root of the tree, set y as the new root
-        if ((*node).GetParent() == nullptr) {
+        if ((*node).GetParent() == nil) {
             root = y;
         }
         // If node is the left child of its parent, set y as the new left child of the parent
@@ -107,49 +110,49 @@ private:
         (*node).SetParent(y);
     }
 
-    void InsertFixup(TreeNode* traversalNode) {
-        // Continue fixing the tree until the parent of 'traversalNode' is black or 'traversalNode' is the root
-        while ((*traversalNode).GetParent() != nullptr && (*traversalNode).GetParent()->GetColor() == false) {
-            // traversalNode's parent is a left child
-            if ((*traversalNode).GetParent() == (*traversalNode).GetParent()->GetParent()->GetLeft()) {
-                TreeNode* y = (*traversalNode).GetParent()->GetParent()->GetRight();  // y is traversalNode's uncle
-                // Case 1: traversalNode's uncle is red
-                if (y != nullptr && (*y).GetColor() == false) {
-                    (*traversalNode).GetParent()->SetColor(true);                     // Change parent color to black
+    void InsertFixup(TreeNode* z) {
+        // Continue fixing the tree until the parent of 'z' is black or 'z' is the root
+        while ((*z).GetParent()->GetColor() == false) {
+            // z's parent is a left child
+            if ((*z).GetParent() == (*z).GetParent()->GetParent()->GetLeft()) {
+                TreeNode* y = (*z).GetParent()->GetParent()->GetRight();  // y is z's uncle
+                // Case 1: z's uncle is red
+                if ((*y).GetColor() == false) {
+                    (*z).GetParent()->SetColor(true);                     // Change parent color to black
                     (*y).SetColor(true);                                  // Change uncle color to black
-                    (*traversalNode).GetParent()->GetParent()->SetColor(false);       // Change grandparent color to red
-                    traversalNode = (*traversalNode).GetParent()->GetParent();                    // Set traversalNode to its grandparent and continue fixing
+                    (*z).GetParent()->GetParent()->SetColor(false);       // Change grandparent color to red
+                    z = (*z).GetParent()->GetParent();                    // Set z to its grandparent and continue fixing
                 }
-                // Case 2: traversalNode's uncle is black
+                // Case 2: z's uncle is black
                 else {
-                    // traversalNode is a right child
-                    if (traversalNode == (*traversalNode).GetParent()->GetRight()) {
-                        traversalNode = (*traversalNode).GetParent();                             // Set traversalNode to its parent
-                        RotateLeft(traversalNode);                                  // Rotate left about traversalNode
+                    // z is a right child
+                    if (z == (*z).GetParent()->GetRight()) {
+                        z = (*z).GetParent();                             // Set z to its parent
+                        RotateLeft(z);                                  // Rotate left about z
                     }
-                    // Case 3: traversalNode's uncle is black and traversalNode is a left child
-                    (*traversalNode).GetParent()->SetColor(true);                     // Change parent color to black
-                    (*traversalNode).GetParent()->GetParent()->SetColor(false);       // Change grandparent color to red
-                    RotateRight((*traversalNode).GetParent()->GetParent());
+                    // Case 3: z's uncle is black and z is a left child
+                    (*z).GetParent()->SetColor(true);                     // Change parent color to black
+                    (*z).GetParent()->GetParent()->SetColor(false);       // Change grandparent color to red
+                    RotateRight((*z).GetParent()->GetParent());
                 }
             }
             // Check on opposites
             else {
-                TreeNode* y = (*traversalNode).GetParent()->GetParent()->GetLeft();
-                if (y != nullptr && (*y).GetColor() == false) {
-                    (*traversalNode).GetParent()->SetColor(true);
+                TreeNode* y = (*z).GetParent()->GetParent()->GetLeft();
+                if ((*y).GetColor() == false) {
+                    (*z).GetParent()->SetColor(true);
                     (*y).SetColor(true);
-                    (*traversalNode).GetParent()->GetParent()->SetColor(false);
-                    traversalNode = (*traversalNode).GetParent()->GetParent();
+                    (*z).GetParent()->GetParent()->SetColor(false);
+                    z = (*z).GetParent()->GetParent();
                 }
                 else {
-                    if (traversalNode == (*traversalNode).GetParent()->GetLeft()) {
-                        traversalNode = (*traversalNode).GetParent();
-                        RotateRight(traversalNode);
+                    if (z == (*z).GetParent()->GetLeft()) {
+                        z = (*z).GetParent();
+                        RotateRight(z);
                     }
-                    (*traversalNode).GetParent()->SetColor(true);
-                    (*traversalNode).GetParent()->GetParent()->SetColor(false);
-                    RotateLeft((*traversalNode).GetParent()->GetParent());
+                    (*z).GetParent()->SetColor(true);
+                    (*z).GetParent()->GetParent()->SetColor(false);
+                    RotateLeft((*z).GetParent()->GetParent());
                 }
             }
         }
@@ -158,19 +161,20 @@ private:
     }
 
     void Transplant(TreeNode* u, TreeNode* v) {
-        // Switch two nodes around
-        if ((*u).GetParent() == nullptr) {
+        // Pseudocode from the book
+        // Where u is the root of T
+        if ((*u).GetParent() == nil || (*u).GetParent() == NULL) {
             root = v;
         }
+        // Otherwise u is either a left child of parent
         else if (u == (*u).GetParent()->GetLeft()) {
             (*u).GetParent()->SetLeft(v);
         }
+        // Or right child of parent
         else {
             (*u).GetParent()->SetRight(v);
         }
-        if (v != nullptr) {
-            (*v).SetParent((*u).GetParent());
-        }
+         (*v).SetParent((*u).GetParent());
     }
 
     TreeNode* Minimum(TreeNode* node) {
@@ -180,124 +184,125 @@ private:
         return node;
     }
 
-    void DeleteFixup(TreeNode* node) {
-        // While node is not the root, non-existant, and black
-        while (node != nullptr && node != root && (*node).GetColor() == true) {
-            // If node is a left child
-            if (node == (*node).GetParent()->GetLeft()) {
-                TreeNode* sibling = (*node).GetParent()->GetRight();   // Sibling of node
-                if ((*sibling).GetColor() == false) {   // Case 1: node's sibling is red
-                    (*sibling).SetColor(true);
-                    (*node).GetParent()->SetColor(false);
-                    RotateLeft((*node).GetParent());
-                    sibling = (*node).GetParent()->GetRight();
+    void DeleteFixup(TreeNode* x) {
+        
+        // w is a pointer to the sibling of x
+        TreeNode* w;
+
+
+        while (x != root && (*x).GetColor() == true) {
+            // is x a left child?
+            if (x == (*x).GetParent()->GetLeft()) {
+                w = (*x).GetParent()->GetRight();
+                if ((*w).GetColor() == false) {
+                    (*w).SetColor(true);
+                    (*x).GetParent()->SetColor(false);
+                    RotateLeft((*x).GetParent());
+                    w = (*x).GetParent()->GetRight();
                 }
-                if ((*sibling).GetLeft()->GetColor() == true && (*sibling).GetRight()->GetColor() == true) {
-                    (*sibling).SetColor(false);
-                    node = (*node).GetParent();
+                if ((*w).GetLeft()->GetColor() == true && (*w).GetRight()->GetColor() == true) {
+                    (*w).SetColor(false);
+                    x = (*x).GetParent();
                 }
                 else {
-                    if ((*sibling).GetRight()->GetColor() == true) {
-                        (*sibling).GetLeft()->SetColor(true);
-                        (*sibling).SetColor(false);
-                        RotateRight(sibling);
-                        sibling = (*node).GetParent()->GetRight();
+                    if (w->GetRight()->GetColor() == true) {
+                        w->GetLeft()->SetColor(true);
+                        w->SetColor(false);
+                        RotateRight(w);
+                        w = (*x).GetParent()->GetRight();
                     }
-                    (*sibling).SetColor((*node).GetParent()->GetColor());
-                    (*node).GetParent()->SetColor(true);
-                    (*sibling).GetRight()->SetColor(true);
-                    RotateLeft((*node).GetParent());
-                    node = root;
+                    w->SetColor(x->GetParent()->GetColor());
+                    x->GetParent()->SetColor(true);
+                    w->GetRight()->SetColor(true);
+                    RotateLeft(x->GetParent());
+                    x = root;
                 }
             }
             else {
-                TreeNode* sibling = (*node).GetParent()->GetLeft();
-                if ((*sibling).GetColor() == false) {
-                    (*sibling).SetColor(true);
-                    (*node).GetParent()->SetColor(false);
-                    RotateRight((*node).GetParent());
-                    sibling = (*node).GetParent()->GetLeft();
+                w = (*x).GetParent()->GetLeft();
+                if ((*w).GetColor() == false) {
+                    (*w).SetColor(true);
+                    (*x).GetParent()->SetColor(false);
+                    RotateRight((*x).GetParent());
+                    w = (*x).GetParent()->GetLeft();
                 }
-                if ((*sibling).GetRight()->GetColor() == true && (*sibling).GetLeft()->GetColor() == true) {
-                    (*sibling).SetColor(false);
-                    node = (*node).GetParent();
+                if ((*w).GetRight()->GetColor() == true && (*w).GetLeft()->GetColor() == true) {
+                    (*w).SetColor(false);
+                    x = (*x).GetParent();
                 }
                 else {
-                    if ((*sibling).GetLeft()->GetColor() == true) {
-                        (*sibling).GetRight()->SetColor(true);
-                        (*sibling).SetColor(false);
-                        RotateLeft(sibling);
-                        sibling = (*node).GetParent()->GetLeft();
+                    if (w->GetLeft()->GetColor() == true) {
+                        w->GetRight()->SetColor(true);
+                        w->SetColor(false);
+                        RotateLeft(w);
+                        w = (*x).GetParent()->GetLeft();
                     }
-                    (*sibling).SetColor((*node).GetParent()->GetColor());
-                    (*node).GetParent()->SetColor(true);
-                    (*sibling).GetLeft()->SetColor(true);
-                    RotateRight((*node).GetParent());
-                    node = root;
+                    w->SetColor(x->GetParent()->GetColor());
+                    x->GetParent()->SetColor(true);
+                    w->GetLeft()->SetColor(true);
+                    RotateRight(x->GetParent());
+                    x = root;
                 }
             }
         }
-        if (node != nullptr)
-            (*node).SetColor(true);
+         (*x).SetColor(true);
+
+
     }
 public:
     // When created, a tree should be empty where the root is NULL
     Tree() {
-        root = nullptr;
     }
-    // When destroyed, a tree should be emptied where each node is deleted.
-    ~Tree() {
-        while (root != nullptr) {
-            RemoveNode((*root).GetValue());
-        }
-    }
+
+    ~Tree() {}
 
     // Return the root of the tree
     TreeNode* GetRoot() {
-        return root;
+        if (root == nil) return NULL;
+        else return root;
     }
 
     void AddValue(int value) {
         // traversalNode will be the placeholder node that we... well traverse over
-        TreeNode* traversalNode = new TreeNode(value);
+        TreeNode* z = new TreeNode(value);
 
-        // Traverse the tree to find the correct position for the new node
-        TreeNode* y = nullptr;
-        TreeNode* node = root;
-        while (node != nullptr) {
-            y = node;
-            // if the new value is less than the current node's value
-            if ((*traversalNode).GetValue() < (*node).GetValue()) {
-                node = (*node).GetLeft(); // move to the left child
+        TreeNode* x = root;
+        TreeNode* y = nil;
+        
+        while (x != nil && x != NULL) {
+            y = x;
+            // if the new value is less than the current x's value
+            if ((*z).GetValue() < (*x).GetValue()) {
+                x = (*x).GetLeft(); // move to the left child
             }
             else {
-                node = (*node).GetRight(); // move to the right child
+                x = (*x).GetRight(); // move to the right child
             }
         }
-        (*traversalNode).SetParent(y);    // Set the new node's parent to the last node visited in the above loop
-        // Insert the new node as a child of the last node visited
-        // If the tree was empty, make the new node the root
-        if (y == nullptr) {
-            root = traversalNode;
+        (*z).SetParent(y);    // Set the new x's parent to the last x visited in the above loop
+        // Insert the new x as a child of the last x visited
+        // If the tree was empty, make the new x the root
+        if (y == nil || y == NULL) {
+            root = z;
         }
-        else if ((*traversalNode).GetValue() < (*y).GetValue()) {
-            (*y).SetLeft(traversalNode);  // If the new value is less than parent's value, make it left child
+        else if ((*z).GetValue() < (*y).GetValue()) {
+            (*y).SetLeft(z);  // If the new value is less than parent's value, make it left child
         }
         else {
-            (*y).SetRight(traversalNode); // If the new value is greater than or equal to the parent, make it right child
+            (*y).SetRight(z); // If the new value is greater than or equal to the parent, make it right child
         }
         // wash
-        (*traversalNode).SetLeft(nullptr);
-        (*traversalNode).SetRight(nullptr);
-        (*traversalNode).SetColor(false);
+        (*z).SetLeft(nil);
+        (*z).SetRight(nil);
+        (*z).SetColor(false);
 
         // perform necessary rotations and color adjustments to keep red-black tree
-        InsertFixup(traversalNode);
+        InsertFixup(z);
     }
 
     TreeNode* GetNode(int value) {
         TreeNode* node = root;
-        while (node != nullptr) {
+        while (node != nil && node != NULL) {
             if (value == (*node).GetValue()) {
                 return node;
             }
@@ -308,53 +313,62 @@ public:
                 node = (*node).GetRight();
             }
         }
-        return nullptr;
+        return NULL;
     }
 
 
 
     void RemoveNode(int value) {
-        TreeNode* traversalNode = GetNode(value);
-        if (traversalNode == nullptr) {
+
+        
+
+        // Find the node to remove
+        TreeNode* z = GetNode(value);
+        TreeNode* y = z;
+        TreeNode* x;
+
+        // If the root is nil
+        if (root == nil || z == nullptr) {
             return;
         }
-        TreeNode* node;
-        TreeNode* y = traversalNode;
+
+        // Keep the original color of y for comparison
         bool yOriginalColor = (*y).GetColor();
-        if ((*traversalNode).GetLeft() == nullptr) {
-            node = (*traversalNode).GetRight();
-            Transplant(traversalNode, (*traversalNode).GetRight());
+
+        // z has max 1 child available
+        if ((*z).GetLeft() == nil || (*z).GetLeft() == NULL) {
+            x = (*z).GetRight();
+            Transplant(z, (*z).GetRight());
         }
-        else if ((*traversalNode).GetRight() == nullptr) {
-            node = (*traversalNode).GetLeft();
-            Transplant(traversalNode, (*traversalNode).GetLeft());
+        else if ((*z).GetRight() == nil || (*z).GetLeft() == NULL) {
+            x = (*z).GetLeft();
+            Transplant(z, (*z).GetLeft());
         }
         else {
-            y = Minimum((*traversalNode).GetRight());
+            y = Minimum((*z).GetRight());
             yOriginalColor = (*y).GetColor();
-            node = (*y).GetRight();
-            if ((*y).GetParent() == traversalNode) {
-                if (node != nullptr) {
-                    (*node).SetParent(y);
-                }
+            x = (*y).GetRight();
+            if (y != z->GetRight()) {
+                Transplant(y, y->GetRight());
+                y->SetRight(z->GetRight());
+                y->GetRight()->SetParent(y);
             }
             else {
-                Transplant(y, (*y).GetRight());
-                (*y).SetRight((*traversalNode).GetRight());
-                (*y).GetRight()->SetParent(y);
+                x->SetParent(y);
             }
-            Transplant(traversalNode, y);
-            (*y).SetLeft((*traversalNode).GetLeft());
+            Transplant(z, y);
+            (*y).SetLeft((*z).GetLeft());
             (*y).GetLeft()->SetParent(y);
-            (*y).SetColor((*traversalNode).GetColor());
+            (*y).SetColor((*z).GetColor());
         }
         if (yOriginalColor == true) {
-            DeleteFixup(node);
+            DeleteFixup(x);
         }
-        delete traversalNode;
+
+        delete z;
     }
 
-    
+
 
 
     void PrintTreeWalk(int orderNumber) {
@@ -362,18 +376,26 @@ public:
         switch (orderNumber) {
         case 1:
             ret = InorderTreeWalk(root);
+            if (ret.size() > 1)
+                ret.erase(ret.size() - 1);
+            cout << ret;
             break;
         case 2:
             ret += PreorderTreeWalk(root);
+            if (ret.size() > 1)
+                ret.erase(ret.size() - 1);
+            cout << ret;
             break;
         case 3:
             ret += PostorderTreeWalk(root);
+            if (ret.size() > 1)
+                ret.erase(ret.size() - 1);
+            cout << ret;
             break;
         default:
             break;
         }
-        ret.erase(ret.size() - 1);
-        cout << ret;
+
     }
 };
 

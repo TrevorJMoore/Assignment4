@@ -4,20 +4,54 @@
 
 using namespace std;
 
-
 class TreeNode {
 private:
-    int value;                      // value of the instance node
+    int value = NULL;                      // value of the instance node
     bool isBlack = false;           // color of the instance node (init red)
-    TreeNode* parentNode;           // pointer to parent node
-    TreeNode* leftNode;             // pointer to left child node
-    TreeNode* rightNode;            // pointer to right child node
+    TreeNode* parentNode = NULL;           // pointer to parent node
+    TreeNode* leftNode = NULL;             // pointer to left child node
+    TreeNode* rightNode = NULL;            // pointer to right child node
+
+    //Find if the tree is one node
+    bool isOne() {
+        //The tree is one node if the current node is surrounded by nil
+        
+
+
+        // Not initialized
+        if (parentNode == nullptr) {
+            return true;
+        }
+        if (parentNode->value == NULL && leftNode->value == NULL && rightNode->value == NULL) {
+            return true;
+        }
+        return false;
+    }
+
+    
+    bool hasParent() {
+        if (parentNode != nullptr && parentNode->value != NULL) {
+            return true;
+        }
+        return false;
+    }
+
+
 
 public:
     // Parameterized Constructor
     TreeNode(int value) {
         this->value = value;
         isBlack = false;    // by default, new nodes created are false
+        parentNode = NULL;
+        leftNode = NULL;
+        rightNode = NULL;
+    }
+
+    // Nil value construct
+    TreeNode() {
+        this->value = NULL;
+        isBlack = false;
         parentNode = nullptr;
         leftNode = nullptr;
         rightNode = nullptr;
@@ -27,39 +61,50 @@ public:
     // Getters and Setters
 
     int GetValue() {
+        if (this == NULL) return NULL;
         return value;
     }
 
     void SetColor(bool color) {
-        this->isBlack = color;
+        if (this == nullptr) return;
+        else this->isBlack = color;
     }
 
     bool GetColor() {
+        if (this == NULL) return true;
         return isBlack;
     }
 
     TreeNode* GetParent() {
-        return parentNode;
+        if (!this) return NULL;
+        else return parentNode;
     }
 
     void SetParent(TreeNode* parent) {
-        this->parentNode = parent;
+        if (this == nullptr) return;
+        else this->parentNode = parent;
     }
 
     TreeNode* GetLeft() {
-        return leftNode;
+        if (!this) return NULL;
+        if (this->isOne()) return NULL;
+        else return leftNode;
     }
 
     void SetLeft(TreeNode* left) {
-        this->leftNode = left;
+        if (!this) return;
+        else this->leftNode = left;
     }
 
     TreeNode* GetRight() {
-        return rightNode;
+        if (!this) return NULL;
+        if (this->isOne()) return NULL;
+        else return rightNode;
     }
 
     void SetRight(TreeNode* right) {
-        this->rightNode = right;
+        if (!this) return;
+        else this->rightNode = right;
     }
 };
 
